@@ -49,3 +49,23 @@ export const getCurrentUser = async () => {
         email: data.user.email ?? "",
     };
 };
+
+export const register = async ({ email, password }: LoginData) => {
+    const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+    });
+
+    if (error) {
+        throw new Error(error.message);
+    }
+
+    if (!data.user) {
+        throw new Error("User was not created");
+    }
+
+    return {
+        id: data.user.id,
+        email: data.user.email ?? "",
+    };
+};
