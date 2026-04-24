@@ -78,6 +78,7 @@ const authSlice = createSlice({
             })
             .addCase(loginUser.fulfilled, (state, action) => {
                 state.isLoading = false;
+                state.error = null;
                 state.user = action.payload;
             })
             .addCase(loginUser.rejected, (state, action) => {
@@ -93,6 +94,7 @@ const authSlice = createSlice({
             })
             .addCase(registerUser.fulfilled, (state, action) => {
                 state.isLoading = false;
+                state.error = null;
                 state.user = action.payload;
             })
             .addCase(registerUser.rejected, (state, action) => {
@@ -100,7 +102,7 @@ const authSlice = createSlice({
                 state.error = 
                     typeof action.payload === "string"
                     ? action.payload
-                    : "Ragistration failed";
+                    : "Registration failed";
             })
     },
 });

@@ -36,6 +36,10 @@ export const logoutUser = async () => {
 export const getCurrentUser = async () => {
     const { data, error } = await supabase.auth.getUser();
 
+    if (error?.message === "Auth session missing!") {
+        return null;
+    }
+
     if (error) {
         throw new Error(error.message);
     }
