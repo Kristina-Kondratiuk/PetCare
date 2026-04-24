@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { login } from "./authService";
+import { login, register } from "./authService";
 
 type User = {
     id: string;
@@ -39,6 +39,22 @@ export const loginUser = createAsyncThunk(
     }
 );
 
+export const registerUser = createAsyncThunk(
+    "auth/registerUser",
+    async ({ email, password }: LoginData, { rejectWithValue }) => {
+        try {
+            const user = await register({ email, password });
+            return user;
+        } catch (error) {
+            if (error instanceof Error) {
+                return rejectWithValue(error.message);
+            }
+
+            return rejectWithValue("Registration failed");
+        }
+    }
+);
+
 const authSlice = createSlice({
     name: 'auth',
     initialState,
@@ -70,7 +86,22 @@ const authSlice = createSlice({
                     typeof action.payload === "string"
                     ? action.payload
                     : "Login failed";
-            });
+            })
+            .addCase(registerUser.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(registerUser.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.user = action.payload;
+            })
+            .addCase(registerUser.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = 
+                    typeof action.payload === "string"
+                    ? action.payload
+                    : "Ragistration failed";
+            })
     },
 });
 
