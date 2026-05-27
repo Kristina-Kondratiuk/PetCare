@@ -1,3 +1,4 @@
+import { cancelLocalNotification, scheduleLocalNotification } from "@/services/notificationService";
 import { supabase } from "@/services/supabase";
 import { getCurrentUser } from "../auth/authService";
 
@@ -35,12 +36,19 @@ export const createReminder = async (reminder: Omit<Reminder, "id" | "user_id" |
         throw new Error("User not authenticated");
     }
 
+    const notificationId = await scheduleLocalNotification({
+        title: reminder.title,
+        body: reminder.description ?? undefined,
+        date: new Date(reminder.reminder_time),
+    });
+
     const { data, error } = await supabase
         .from("reminders")
         .insert([
             {
                 ...reminder,
                 user_id: user.id,
+                notification_id: notificationId,
             },
         ])
         .select()
@@ -69,6 +77,20 @@ export const updateReminder = async (id: string, updates: Partial<Omit<Reminder,
 };
 
 export const deleteReminder = async (id: string) => {
+    const { data: reminder, error: fetchError } = await supabase
+        .from("reminders")
+        .select("notification_id")
+        .eq("id", id)
+        .single();
+    
+    if (fetchError) {
+        throw new Error(fetchError.message);
+    }
+
+    if (reminder?.notification_id) {
+        await cancelLocalNotification(reminder.notification_id);
+    }
+
     const { error } = await supabase
         .from("reminders")
         .delete()
