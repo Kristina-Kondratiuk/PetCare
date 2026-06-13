@@ -1,7 +1,18 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
+import { fetchPets } from "@/features/pets/petsSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useEffect } from "react";
+
 export default function HomeScreen() {
+  const dispatch = useAppDispatch();
+  const { pets, isLoading, error } = useAppSelector((state) => state.pets);
+
+  useEffect(() => {
+    dispatch(fetchPets());
+  }, [dispatch]);
+
   return (
     <View style={styles.screen}>
       <ScrollView
@@ -12,30 +23,33 @@ export default function HomeScreen() {
 
         <Text style={styles.sectionTitle}>Moje zwierzęta:</Text>
 
-        <View style={styles.petsContainer}>
-          <View style={styles.petCard}>
-            <Image
-              source={{ uri: "https://placehold.co/60x60" }}
-              style={styles.petImage}
-            />
-            <View>
-              <Text style={styles.petName}>Miki</Text>
-              <Text style={styles.petInfo}>Pies</Text>
-              <Text style={styles.petInfo}>1 rok 4 miesiące</Text>
-            </View>
-          </View>
+        {isLoading && <Text style={styles.petInfo}>Ładowanie...</Text>}
+        {error && <Text style={styles.errorText}>{error}</Text>}
+        {!isLoading && pets.length === 0 && (
+          <Text style={styles.petInfo}>Nie dodano jeszcze zwierząt</Text>
+        )}
 
-          <View style={styles.petCard}>
-            <Image
-              source={{ uri: "https://placehold.co/60x60" }}
-              style={styles.petImage}
-            />
-            <View>
-              <Text style={styles.petName}>Luna</Text>
-              <Text style={styles.petInfo}>Kotka</Text>
-              <Text style={styles.petInfo}>8 miesięcy</Text>
+        <View style={styles.petsContainer}>
+          {pets.map((pet) => (
+            <View key={pet.id} style={styles.petCard}>
+              {pet.photo_url ? (
+                <Image
+                  source={{ uri: pet.photo_url }}
+                  style={styles.petImage}
+                />
+              ) : (
+                <View style={styles.petImage} />
+              )}
+
+              <View>
+                <Text style={styles.petName}>{pet.name}</Text>
+                <Text style={styles.petInfo}>{pet.type}</Text>
+                <Text style={styles.petInfo}>
+                  {pet.breed || pet.birth_date || "Brak informacji"}
+                </Text>
+              </View>
             </View>
-          </View>
+          ))}
         </View>
 
         <View style={styles.scheduleContainer}>
@@ -133,7 +147,7 @@ const styles = StyleSheet.create({
     height: 95,
     zIndex: 999,
   },
-  
+
   container: {
     flex: 1,
     backgroundColor: "#ffffff",
@@ -181,7 +195,7 @@ const styles = StyleSheet.create({
       height: 0,
     },
     shadowOpacity: 0.52,
-    shadowRadius: 4,
+    shadowRadius: 2,
     elevation: 4,
   },
 
@@ -217,7 +231,7 @@ const styles = StyleSheet.create({
       height: 0,
     },
     shadowOpacity: 0.52,
-    shadowRadius: 4,
+    shadowRadius: 2,
     elevation: 4,
   },
 
@@ -246,7 +260,7 @@ const styles = StyleSheet.create({
       height: 0,
     },
     shadowOpacity: 0.52,
-    shadowRadius: 4,
+    shadowRadius: 2,
   },
 
   scheduleItemTitle: {
@@ -284,7 +298,7 @@ const styles = StyleSheet.create({
       height: 0,
     },
     shadowOpacity: 0.52,
-    shadowRadius: 4,
+    shadowRadius: 2,
     elevation: 4,
   },
 
@@ -316,7 +330,7 @@ const styles = StyleSheet.create({
       height: 0,
     },
     shadowOpacity: 0.52,
-    shadowRadius: 4,
+    shadowRadius: 2,
     elevation: 4,
     marginTop: 30,
   },
@@ -350,5 +364,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: "#d9d9d9",
     marginBottom: 12,
+  },
+
+  errorText: {
+    color: "red",
+    marginBottom: 10,
   },
 });
