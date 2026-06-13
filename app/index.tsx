@@ -1,9 +1,19 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
+import { useAppSelector } from '@/store/hooks';
+
 export default function Welcome() {
+    const {user} = useAppSelector((state) => state.auth);
+
+    useEffect(() => {
+        if (user) {
+            router.replace('/(tabs)');
+        }
+    }, [user]);
+
   return (
     <LinearGradient
   colors={['#C9F8FF', '#FFFFFF']}
