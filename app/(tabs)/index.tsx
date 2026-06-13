@@ -2,16 +2,31 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { fetchPets } from "@/features/pets/petsSlice";
+import { fetchReminders } from "@/features/reminders/remindersSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useEffect } from "react";
 
 export default function HomeScreen() {
   const dispatch = useAppDispatch();
   const { pets, isLoading, error } = useAppSelector((state) => state.pets);
+  const { reminders } = useAppSelector((state) => state.reminders);
 
   useEffect(() => {
     dispatch(fetchPets());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (pets.length > 0) {
+      dispatch(fetchReminders(pets[0].id));
+    }
+  }, [dispatch, pets]);
+
+  const formatReminderTime = (date: string) => {
+    return new Date(date).toLocaleTimeString("pl-PL", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
   return (
     <View style={styles.screen}>
@@ -55,35 +70,24 @@ export default function HomeScreen() {
         <View style={styles.scheduleContainer}>
           <Text style={styles.scheduleTitle}>Harmonogram spacerów</Text>
 
-          <View style={styles.scheduleItem}>
-            <View>
-              <Text style={styles.scheduleItemTitle}>Rano</Text>
-              <Text style={styles.scheduleItemText}>
-                O 7:00, przypomnienie 10 min wcześniej
-              </Text>
-            </View>
-            <View style={styles.checkbox} />
-          </View>
+          {reminders.length > 0 ? (
+            reminders.map((reminder) => (
+              <View key={reminder.id} style={styles.scheduleItem}>
+                <View>
+                  <Text style={styles.scheduleItemTitle}>{reminder.title}</Text>
 
-          <View style={styles.scheduleItem}>
-            <View>
-              <Text style={styles.scheduleItemTitle}>Południe</Text>
-              <Text style={styles.scheduleItemText}>
-                O 13:00, przypomnienie 10 min wcześniej
-              </Text>
-            </View>
-            <View style={styles.checkbox} />
-          </View>
+                  <Text style={styles.scheduleItemText}>
+                    {reminder.description ??
+                      `O ${formatReminderTime(reminder.reminder_time)}`}
+                  </Text>
+                </View>
 
-          <View style={styles.scheduleItem}>
-            <View>
-              <Text style={styles.scheduleItemTitle}>Wieczór</Text>
-              <Text style={styles.scheduleItemText}>
-                O 18:00, przypomnienie 10 min wcześniej
-              </Text>
-            </View>
-            <View style={styles.checkbox} />
-          </View>
+                <View style={styles.checkbox} />
+              </View>
+            ))
+          ) : (
+            <Text style={styles.scheduleItemText}>Brak przypomnień</Text>
+          )}
         </View>
 
         <View style={styles.galleryContainer}>
