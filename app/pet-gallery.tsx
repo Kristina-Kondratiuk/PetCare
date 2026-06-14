@@ -3,6 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import {
+    Alert,
     Image,
     Pressable,
     ScrollView,
@@ -11,9 +12,11 @@ import {
     View,
 } from "react-native";
 
+import { PetPhoto } from "@/features/petPhotos/petPhotosService";
 import {
     addPetPhotoFromDevice,
     fetchPetPhotos,
+    removePetPhoto,
 } from "@/features/petPhotos/petPhotosSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
@@ -53,6 +56,20 @@ export default function PetGalleryScreen() {
     }
   };
 
+  const handleDeletePhoto = (photo: PetPhoto) => {
+    Alert.alert("Usunąć zdjęcie?", "Tej akcji nie można cofnąć.", [
+      {
+        text: "Anuluj",
+        style: "cancel",
+      },
+      {
+        text: "Usuń",
+        style: "destructive",
+        onPress: () => dispatch(removePetPhoto(photo)),
+      },
+    ]);
+  };
+
   return (
     <View style={styles.screen}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -78,12 +95,17 @@ export default function PetGalleryScreen() {
         <View style={styles.photosGrid}>
           {photos.length > 0 ? (
             photos.map((photo) => (
-              <Image
+              <Pressable
                 key={photo.id}
-                source={{ uri: photo.photo_url }}
-                style={styles.photo}
-                resizeMode="cover"
-              />
+                style={styles.photoWrapper}
+                onLongPress={() => handleDeletePhoto(photo)}
+              >
+                <Image
+                  source={{ uri: photo.photo_url }}
+                  style={styles.photo}
+                  resizeMode="cover"
+                />
+              </Pressable>
             ))
           ) : (
             <Text style={styles.emptyText}>Brak zdjęć</Text>
@@ -190,9 +212,16 @@ const styles = StyleSheet.create({
     rowGap: 10,
   },
 
-  photo: {
+  photoWrapper: {
     width: "48%",
     height: 152,
+    borderRadius: 16,
+    overflow: "hidden",
+  },
+
+  photo: {
+    width: "100%",
+    height: "100%",
     borderRadius: 16,
     backgroundColor: "#d9d9d9",
   },

@@ -1,10 +1,12 @@
-import { fetchAllPetPhotos } from "@/features/petPhotos/petPhotosSlice";
+import { addPetPhotoFromDevice, fetchAllPetPhotos } from "@/features/petPhotos/petPhotosSlice";
 import { fetchPets } from "@/features/pets/petsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import {
+  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -23,6 +25,43 @@ export default function GalleryScreen() {
     dispatch(fetchAllPetPhotos());
   }, [dispatch]);
 
+  const handleAddPhoto = async (petId: string) => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      quality: 1,
+    });
+  
+    if (!result.canceled) {
+      await dispatch(
+        addPetPhotoFromDevice({
+          petId,
+          imageUri: result.assets[0].uri,
+        })
+      );
+  
+      dispatch(fetchAllPetPhotos());
+    }
+  };
+  
+  const handleSelectPetForPhoto = () => {
+    if (pets.length === 0) {
+      Alert.alert("Brak zwierząt", "Najpierw dodaj zwierzę.");
+      return;
+    }
+  
+    Alert.alert("Dodaj zdjęcie", "Wybierz zwierzę", [
+      ...pets.map((pet) => ({
+        text: pet.name,
+        onPress: () => handleAddPhoto(pet.id),
+      })),
+      {
+        text: "Anuluj",
+        style: "cancel",
+      },
+    ]);
+  };
+
   return (
     <View style={styles.screen}>
       <ScrollView
@@ -31,9 +70,9 @@ export default function GalleryScreen() {
       >
         <Text style={styles.title}>Galeria zdjęć</Text>
 
-        <View style={styles.addPhotoButton}>
+        <Pressable style={styles.addPhotoButton} onPress={handleSelectPetForPhoto}>
           <Text style={styles.addPhotoText}>+ Dodać zdjęcia zwierzęta</Text>
-        </View>
+        </Pressable>
 
         {pets.map((pet) => (
           <View key={pet.id} style={styles.galleryCard}>

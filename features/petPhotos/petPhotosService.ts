@@ -97,3 +97,22 @@ export const uploadPetPhoto = async (petId: string, imageUri: string) => {
 
   return await addPetPhoto(petId, data.publicUrl);
 };
+
+export const deletePetPhoto = async (photo: PetPhoto) => {
+  const filePath = photo.photo_url.split("/pet-photos/")[1];
+
+  if (filePath) {
+    await supabase.storage.from("pet-photos").remove([filePath]);
+  }
+
+  const { error } = await supabase
+    .from("pet_photos")
+    .delete()
+    .eq("id", photo.id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return photo.id;
+};

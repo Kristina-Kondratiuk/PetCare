@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+    deletePetPhoto,
     getAllPetPhotos,
     getPetPhotos,
     PetPhoto,
@@ -66,6 +67,21 @@ export const addPetPhotoFromDevice = createAsyncThunk(
   }
 );
 
+export const removePetPhoto = createAsyncThunk(
+  "petPhotos/removePetPhoto",
+  async (photo: PetPhoto, { rejectWithValue }) => {
+    try {
+      return await deletePetPhoto(photo);
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+
+      return rejectWithValue("Failed to delete pet photo");
+    }
+  }
+);
+
 const petPhotosSlice = createSlice({
   name: "petPhotos",
   initialState,
@@ -127,6 +143,11 @@ const petPhotosSlice = createSlice({
           typeof action.payload === "string"
             ? action.payload
             : "Failed to upload pet photo";
+      })
+      .addCase(removePetPhoto.fulfilled, (state, action) => {
+        state.photos = state.photos.filter(
+          (photo) => photo.id !== action.payload
+        );
       });
   },
 });
