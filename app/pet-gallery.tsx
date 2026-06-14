@@ -1,10 +1,56 @@
+import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, Stack } from "expo-router";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useEffect } from "react";
+import {
+    Image,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
 
-const photos = [1, 2, 3, 4, 5, 6];
+import {
+    addPetPhotoFromDevice,
+    fetchPetPhotos,
+} from "@/features/petPhotos/petPhotosSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
 export default function PetGalleryScreen() {
+  const dispatch = useAppDispatch();
+  const { photos, isLoading, error } = useAppSelector(
+    (state) => state.petPhotos
+  );
+
+  const { pets } = useAppSelector((state) => state.pets);
+  const currentPet = pets[0];
+
+  useEffect(() => {
+    if (currentPet) {
+      dispatch(fetchPetPhotos(currentPet.id));
+    }
+  }, [dispatch, currentPet]);
+
+  const handleAddPhoto = async () => {
+    if (!currentPet) return;
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      dispatch(
+        addPetPhotoFromDevice({
+          petId: currentPet.id,
+          imageUri: result.assets[0].uri,
+        })
+      );
+    }
+  };
+
   return (
     <View style={styles.screen}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -21,15 +67,28 @@ export default function PetGalleryScreen() {
 
         <Text style={styles.petName}>Luna</Text>
 
-        <View style={styles.addPhotoButton}>
-          <Text style={styles.addPhotoText}>+ Dodać zdjęcia zwierzęta</Text>
-        </View>
+        <Pressable style={styles.addPhotoButton} onPress={handleAddPhoto}>
+          <Text style={styles.addPhotoText}>
+            {isLoading ? "Dodawanie..." : "+ Dodać zdjęcia zwierzęta"}
+          </Text>
+        </Pressable>
 
         <View style={styles.photosGrid}>
-          {photos.map((photo) => (
-            <View key={photo} style={styles.photo} />
-          ))}
+          {photos.length > 0 ? (
+            photos.map((photo) => (
+              <Image
+                key={photo.id}
+                source={{ uri: photo.photo_url }}
+                style={styles.photo}
+                resizeMode="cover"
+              />
+            ))
+          ) : (
+            <Text style={styles.emptyText}>Brak zdjęć</Text>
+          )}
         </View>
+
+        {error && <Text style={styles.errorText}>{error}</Text>}
       </ScrollView>
 
       <LinearGradient
@@ -131,5 +190,15 @@ const styles = StyleSheet.create({
     height: 152,
     borderRadius: 16,
     backgroundColor: "#d9d9d9",
+  },
+
+  emptyText: {
+    fontSize: 14,
+    color: "#676767",
+  },
+
+  errorText: {
+    color: "red",
+    marginTop: 10,
   },
 });
