@@ -1,6 +1,6 @@
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
-import { router, Stack } from "expo-router";
+import { router, Stack, useLocalSearchParams } from "expo-router";
 import { useEffect } from "react";
 import {
     Image,
@@ -23,17 +23,19 @@ export default function PetGalleryScreen() {
     (state) => state.petPhotos
   );
 
-  const { pets } = useAppSelector((state) => state.pets);
-  const currentPet = pets[0];
+  const { petId, petName } = useLocalSearchParams<{
+    petId: string;
+    petName: string;
+  }>();
 
   useEffect(() => {
-    if (currentPet) {
-      dispatch(fetchPetPhotos(currentPet.id));
+    if (petId) {
+      dispatch(fetchPetPhotos(petId));
     }
-  }, [dispatch, currentPet]);
+  }, [dispatch, petId]);
 
   const handleAddPhoto = async () => {
-    if (!currentPet) return;
+    if (!petId) return;
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
@@ -44,7 +46,7 @@ export default function PetGalleryScreen() {
     if (!result.canceled) {
       dispatch(
         addPetPhotoFromDevice({
-          petId: currentPet.id,
+          petId,
           imageUri: result.assets[0].uri,
         })
       );
@@ -60,12 +62,12 @@ export default function PetGalleryScreen() {
         contentContainerStyle={styles.content}
       >
         <View style={styles.header}>
-          <Text style={styles.backButton} onPress={() => router.back()}>
-            ←
-          </Text>
-        </View>
+          <Pressable onPress={() => router.back()}>
+            <Text style={styles.backButton}>←</Text>
+          </Pressable>
 
-        <Text style={styles.petName}>Luna</Text>
+          <Text style={styles.petName}>{petName}</Text>
+        </View>
 
         <Pressable style={styles.addPhotoButton} onPress={handleAddPhoto}>
           <Text style={styles.addPhotoText}>
@@ -135,13 +137,15 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    flexDirection: "row",
+    position: "relative",
+    height: 40,
     justifyContent: "space-between",
-    alignItems: "center",
     marginBottom: 30,
   },
 
   backButton: {
+    position: "absolute",
+    left: 0,
     fontSize: 32,
     color: "#0022FF",
   },
@@ -151,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "700",
     color: "#000000",
-    marginBottom: 20,
+    textAlign: "center",
   },
 
   addPhotoButton: {

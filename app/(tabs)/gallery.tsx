@@ -1,11 +1,20 @@
+import { fetchPets } from "@/features/pets/petsSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
+import { useEffect } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
-const catPhotos = [1, 2, 3, 4];
-const dogPhotos = [1, 2, 3, 4];
+const previewPhotos = [1, 2, 3, 4];
 
 export default function GalleryScreen() {
+  const dispatch = useAppDispatch();
+  const { pets } = useAppSelector((state) => state.pets);
+
+  useEffect(() => {
+    dispatch(fetchPets());
+  }, [dispatch]);
+
   return (
     <View style={styles.screen}>
       <ScrollView
@@ -18,35 +27,33 @@ export default function GalleryScreen() {
           <Text style={styles.addPhotoText}>+ Dodać zdjęcia zwierzęta</Text>
         </View>
 
-        <View style={styles.galleryCard}>
-          <View style={styles.galleryHeader}>
-            <Text style={styles.petTitle}>Luna</Text>
-            <Pressable onPress={() => router.push("/pet-gallery")}>
-              <Text style={styles.seeMore}>Zobaczyć więcej</Text>
-            </Pressable>
-          </View>
+        {pets.map((pet) => (
+          <View key={pet.id} style={styles.galleryCard}>
+            <View style={styles.galleryHeader}>
+              <Text style={styles.petTitle}>{pet.name}</Text>
 
-          <View style={styles.photosGrid}>
-            {catPhotos.map((photo) => (
-              <View key={photo} style={styles.photo} />
-            ))}
-          </View>
-        </View>
+              <Pressable
+                onPress={() =>
+                  router.push({
+                    pathname: "/pet-gallery",
+                    params: {
+                      petId: pet.id,
+                      petName: pet.name,
+                    },
+                  })
+                }
+              >
+                <Text style={styles.seeMore}>Zobaczyć więcej</Text>
+              </Pressable>
+            </View>
 
-        <View style={styles.galleryCard}>
-          <View style={styles.galleryHeader}>
-            <Text style={styles.petTitle}>Miki</Text>
-            <Pressable onPress={() => router.push("/pet-gallery")}>
-              <Text style={styles.seeMore}>Zobaczyć więcej</Text>
-            </Pressable>
+            <View style={styles.photosGrid}>
+              {previewPhotos.map((photo) => (
+                <View key={photo} style={styles.photo} />
+              ))}
+            </View>
           </View>
-
-          <View style={styles.photosGrid}>
-            {dogPhotos.map((photo) => (
-              <View key={photo} style={styles.photo} />
-            ))}
-          </View>
-        </View>
+        ))}
       </ScrollView>
 
       <LinearGradient
