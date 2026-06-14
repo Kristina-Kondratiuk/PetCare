@@ -122,26 +122,6 @@ export default function HomeScreen() {
             <Text style={styles.scheduleItemText}>Brak przypomnień</Text>
           )}
         </View>
-
-        <View style={styles.galleryContainer}>
-          <View style={styles.galleryHeader}>
-            <Text style={styles.galleryTitle}>Galeria zdjęć</Text>
-            <Text style={styles.galleryArrow}>→</Text>
-          </View>
-
-          <View style={styles.addPhotoButton}>
-            <Text style={styles.addPhotoText}>+ Dodaj zdjęcia zwierzęta</Text>
-          </View>
-
-          <Text style={styles.petGalleryTitle}>Luna</Text>
-
-          <View style={styles.photosGrid}>
-            <View style={styles.photoPlaceholder} />
-            <View style={styles.photoPlaceholder} />
-            <View style={styles.photoPlaceholder} />
-            <View style={styles.photoPlaceholder} />
-          </View>
-        </View>
       </ScrollView>
 
       <LinearGradient
