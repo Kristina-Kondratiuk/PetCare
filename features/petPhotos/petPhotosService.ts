@@ -8,6 +8,19 @@ export type PetPhoto = {
   created_at?: string;
 };
 
+export const getAllPetPhotos = async () => {
+  const { data, error } = await supabase
+    .from("pet_photos")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as PetPhoto[];
+};
+
 export const getPetPhotos = async (petId: string) => {
   const { data, error } = await supabase
     .from("pet_photos")
@@ -68,8 +81,6 @@ export const uploadPetPhoto = async (petId: string, imageUri: string) => {
 
   const fileExt = imageUri.split(".").pop() ?? "jpg";
   const fileName = `${userData.user.id}/${petId}/${Date.now()}.${fileExt}`;
-
-
 
   const { error: uploadError } = await supabase.storage
     .from("pet-photos")

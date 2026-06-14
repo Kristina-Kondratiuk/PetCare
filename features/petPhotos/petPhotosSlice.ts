@@ -1,5 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getPetPhotos, PetPhoto, uploadPetPhoto } from "./petPhotosService";
+import {
+    getAllPetPhotos,
+    getPetPhotos,
+    PetPhoto,
+    uploadPetPhoto,
+} from "./petPhotosService";
 
 type PetPhotosState = {
   photos: PetPhoto[];
@@ -12,6 +17,21 @@ const initialState: PetPhotosState = {
   isLoading: false,
   error: null,
 };
+
+export const fetchAllPetPhotos = createAsyncThunk(
+  "petPhotos/fetchAllPetPhotos",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await getAllPetPhotos();
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+
+      return rejectWithValue("Failed to fetch pet photos");
+    }
+  }
+);
 
 export const fetchPetPhotos = createAsyncThunk(
   "petPhotos/fetchPetPhotos",
@@ -70,6 +90,22 @@ const petPhotosSlice = createSlice({
         state.photos = action.payload;
       })
       .addCase(fetchPetPhotos.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error =
+          typeof action.payload === "string"
+            ? action.payload
+            : "Failed to fetch pet photos";
+      })
+      .addCase(fetchAllPetPhotos.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllPetPhotos.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.error = null;
+        state.photos = action.payload;
+      })
+      .addCase(fetchAllPetPhotos.rejected, (state, action) => {
         state.isLoading = false;
         state.error =
           typeof action.payload === "string"

@@ -156,6 +156,7 @@ export default function HomeScreen() {
         ]}
         locations={[0, 0.2, 0.35, 0.5, 0.7, 0.85, 1]}
         style={styles.topFade}
+        pointerEvents="none"
       />
     </View>
   );

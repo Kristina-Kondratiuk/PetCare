@@ -1,18 +1,26 @@
+import { fetchAllPetPhotos } from "@/features/petPhotos/petPhotosSlice";
 import { fetchPets } from "@/features/pets/petsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useEffect } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-
-const previewPhotos = [1, 2, 3, 4];
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export default function GalleryScreen() {
   const dispatch = useAppDispatch();
   const { pets } = useAppSelector((state) => state.pets);
+  const { photos } = useAppSelector((state) => state.petPhotos);
 
   useEffect(() => {
     dispatch(fetchPets());
+    dispatch(fetchAllPetPhotos());
   }, [dispatch]);
 
   return (
@@ -48,9 +56,21 @@ export default function GalleryScreen() {
             </View>
 
             <View style={styles.photosGrid}>
-              {previewPhotos.map((photo) => (
-                <View key={photo} style={styles.photo} />
-              ))}
+              {photos.filter((photo) => photo.pet_id === pet.id).length > 0 ? (
+                photos
+                  .filter((photo) => photo.pet_id === pet.id)
+                  .slice(0, 4)
+                  .map((photo) => (
+                    <Image
+                      key={photo.id}
+                      source={{ uri: photo.photo_url }}
+                      style={styles.photo}
+                      resizeMode="cover"
+                    />
+                  ))
+              ) : (
+                <Text style={styles.emptyText}>Brak zdjęć</Text>
+              )}
             </View>
           </View>
         ))}
@@ -68,6 +88,7 @@ export default function GalleryScreen() {
         ]}
         locations={[0, 0.2, 0.35, 0.5, 0.7, 0.85, 1]}
         style={styles.topFade}
+        pointerEvents="none"
       />
     </View>
   );
@@ -182,5 +203,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: "#d9d9d9",
     marginBottom: 10,
+  },
+
+  emptyText: {
+    fontSize: 14,
+    color: "#676767",
   },
 });
