@@ -1,5 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { router } from "expo-router";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const catPhotos = [1, 2, 3, 4];
 const dogPhotos = [1, 2, 3, 4];
@@ -20,7 +21,9 @@ export default function GalleryScreen() {
         <View style={styles.galleryCard}>
           <View style={styles.galleryHeader}>
             <Text style={styles.petTitle}>Luna</Text>
-            <Text style={styles.seeMore}>Zobaczyć więcej</Text>
+            <Pressable onPress={() => router.push("/pet-gallery")}>
+              <Text style={styles.seeMore}>Zobaczyć więcej</Text>
+            </Pressable>
           </View>
 
           <View style={styles.photosGrid}>
@@ -33,7 +36,9 @@ export default function GalleryScreen() {
         <View style={styles.galleryCard}>
           <View style={styles.galleryHeader}>
             <Text style={styles.petTitle}>Miki</Text>
-            <Text style={styles.seeMore}>Zobaczyć więcej</Text>
+            <Pressable onPress={() => router.push("/pet-gallery")}>
+              <Text style={styles.seeMore}>Zobaczyć więcej</Text>
+            </Pressable>
           </View>
 
           <View style={styles.photosGrid}>
