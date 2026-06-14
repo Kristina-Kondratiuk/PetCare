@@ -3,8 +3,8 @@ import { fetchPets } from "@/features/pets/petsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
-import { useEffect } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 import {
   Alert,
   Image,
@@ -15,15 +15,18 @@ import {
   View,
 } from "react-native";
 
+
 export default function GalleryScreen() {
   const dispatch = useAppDispatch();
   const { pets } = useAppSelector((state) => state.pets);
   const { photos } = useAppSelector((state) => state.petPhotos);
 
-  useEffect(() => {
-    dispatch(fetchPets());
-    dispatch(fetchAllPetPhotos());
-  }, [dispatch]);
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchPets());
+      dispatch(fetchAllPetPhotos());
+    }, [dispatch])
+  );
 
   const handleAddPhoto = async (petId: string) => {
     const result = await ImagePicker.launchImageLibraryAsync({
