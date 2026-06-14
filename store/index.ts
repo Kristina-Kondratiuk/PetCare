@@ -1,3 +1,4 @@
+import petPhotosReducer from "@/features/petPhotos/petPhotosSlice";
 import petsReducer from "@/features/pets/petsSlice";
 import remindersReducer from "@/features/reminders/remindersSlice";
 import { configureStore } from "@reduxjs/toolkit";
@@ -10,6 +11,7 @@ export const store = configureStore({
         pets: petsReducer,
         medicalRecords: medicalRecordsReducer,
         reminders: remindersReducer,
+        petPhotos: petPhotosReducer,
     },
 });
 
