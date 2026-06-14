@@ -157,15 +157,6 @@ export default function HomeScreen() {
         locations={[0, 0.2, 0.35, 0.5, 0.7, 0.85, 1]}
         style={styles.topFade}
       />
-      {/* <LinearGradient
-        colors={[
-          "rgba(255,255,255,1)",
-          "rgba(255,255,255,0.7)",
-          "rgba(255,255,255,0.3)",
-          "rgba(255,255,255,0)",
-        ]}
-        style={styles.gradient}
-      /> */}
     </View>
   );
 }
