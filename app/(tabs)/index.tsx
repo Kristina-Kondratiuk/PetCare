@@ -1,8 +1,18 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import { fetchPets } from "@/features/pets/petsSlice";
-import { fetchReminders } from "@/features/reminders/remindersSlice";
+import {
+  editReminder,
+  fetchReminders,
+} from "@/features/reminders/remindersSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useEffect } from "react";
 
@@ -20,6 +30,17 @@ export default function HomeScreen() {
       dispatch(fetchReminders(pets[0].id));
     }
   }, [dispatch, pets]);
+
+  const handleToggleReminder = (id: string, isCompleted?: boolean) => {
+    dispatch(
+      editReminder({
+        id,
+        updates: {
+          is_completed: !isCompleted,
+        },
+      })
+    );
+  };
 
   const formatReminderTime = (date: string) => {
     return new Date(date).toLocaleTimeString("pl-PL", {
@@ -82,7 +103,19 @@ export default function HomeScreen() {
                   </Text>
                 </View>
 
-                <View style={styles.checkbox} />
+                <Pressable
+                  style={[
+                    styles.checkbox,
+                    reminder.is_completed && styles.checkboxChecked,
+                  ]}
+                  onPress={() =>
+                    handleToggleReminder(reminder.id, reminder.is_completed)
+                  }
+                >
+                  {reminder.is_completed && (
+                    <Text style={styles.checkboxCheck}>✓</Text>
+                  )}
+                </Pressable>
               </View>
             ))
           ) : (
@@ -288,6 +321,21 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderColor: "#000000",
     borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  checkboxChecked: {
+    backgroundColor: "#0022FF",
+    borderColor: "#0022FF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  checkboxCheck: {
+    color: "#ffffff",
+    fontSize: 14,
+    fontWeight: "700",
   },
 
   galleryContainer: {
