@@ -48,6 +48,7 @@ function RootLayoutContent() {
           <Stack.Screen name="edit-profile" options={{ headerShown: false }} />
           <Stack.Screen name="pet-profile" options={{ headerShown: false }} />
           <Stack.Screen name="edit-pet-profile" options={{ headerShown: false }} />
+          <Stack.Screen name="schedule" options={{ headerShown: false }} />
           <Stack.Screen
             name="modal"
             options={{ presentation: 'modal', title: 'Modal' }}
