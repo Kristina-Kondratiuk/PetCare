@@ -22,14 +22,20 @@ import {
 
 export default function Profile() {
     const [profile, setProfile] = useState<any>(null);
+    const [pet, setPet] = useState<any>(null);
 
 useFocusEffect(
   useCallback(() => {
     const loadProfile = async () => {
       const savedProfile = await AsyncStorage.getItem('profile');
+      const savedPet = await AsyncStorage.getItem('petProfile');
 
       if (savedProfile) {
         setProfile(JSON.parse(savedProfile));
+      }
+
+      if (savedPet) {
+        setPet(JSON.parse(savedPet));
       }
     };
 
@@ -65,8 +71,12 @@ useFocusEffect(
 
       <Text style={styles.sectionTitle}>Zarządzanie profilem</Text>
 
-      <PetCard name="Miki" type="Pies" />
-      <PetCard name="Luna" type="Kotka" />
+            <PetCard
+            name={pet?.name ?? 'Miki'}
+            type={pet?.type ?? 'Pies'}
+            image={pet?.image}
+            />
+           <PetCard name="Luna" type="Kotka" />
 
       <MenuItem title="Dodaj zwierzęta" icon={<Plus size={22} color="#0044FF" strokeWidth={2} />} 
       hideArrow/>
@@ -95,7 +105,7 @@ useFocusEffect(
 
 function PetCard({ name, type, image }: any) {
   return (
-    <TouchableOpacity style={styles.petCard}>
+    <TouchableOpacity style={styles.petCard} onPress={() => router.push('/pet-profile')}>
       {image ? (
         <Image source={{ uri: image }} style={styles.petImage} />
       ) : (

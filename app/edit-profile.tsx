@@ -119,6 +119,7 @@ const showImageOptions = () => {
       <Text style={styles.buttonText}>Zapisz zmiany</Text>
     </TouchableOpacity>
   </View>
+  
 );
 }
 
