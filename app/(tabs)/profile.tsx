@@ -122,7 +122,7 @@ export default function Profile() {
 
 function PetCard({ name, type, image }: any) {
   return (
-    <TouchableOpacity style={styles.petCard}>
+    <TouchableOpacity style={styles.petCard} onPress={() => router.push('/pet-profile')}>
       {image ? (
         <Image source={{ uri: image }} style={styles.petImage} />
       ) : (
