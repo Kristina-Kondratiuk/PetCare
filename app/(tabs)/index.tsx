@@ -9,9 +9,10 @@ import {
 } from "react-native";
 
 import { fetchPets } from "@/features/pets/petsSlice";
+import { fetchProfile } from "@/features/profile/profileSlice";
 import {
   editReminder,
-  fetchReminders,
+  fetchAllReminders,
 } from "@/features/reminders/remindersSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useEffect } from "react";
@@ -20,16 +21,13 @@ export default function HomeScreen() {
   const dispatch = useAppDispatch();
   const { pets, isLoading, error } = useAppSelector((state) => state.pets);
   const { reminders } = useAppSelector((state) => state.reminders);
+  const { profile } = useAppSelector((state) => state.profile);
 
   useEffect(() => {
     dispatch(fetchPets());
+    dispatch(fetchProfile());
+    dispatch(fetchAllReminders());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (pets.length > 0) {
-      dispatch(fetchReminders(pets[0].id));
-    }
-  }, [dispatch, pets]);
 
   const handleToggleReminder = (id: string, isCompleted?: boolean) => {
     dispatch(
@@ -55,7 +53,9 @@ export default function HomeScreen() {
         style={styles.container}
         contentContainerStyle={styles.content}
       >
-        <Text style={styles.greeting}>Cześć, Magdalena!</Text>
+        <Text style={styles.greeting}>
+          Cześć, {profile?.first_name || "Użytkowniku"}!
+        </Text>
 
         <Text style={styles.sectionTitle}>Moje zwierzęta:</Text>
 
@@ -78,8 +78,12 @@ export default function HomeScreen() {
               )}
 
               <View style={styles.petTextContainer}>
-                <Text style={styles.petName} numberOfLines={1}>{pet.name}</Text>
-                <Text style={styles.petInfo} numberOfLines={1}>{pet.type}</Text>
+                <Text style={styles.petName} numberOfLines={1}>
+                  {pet.name}
+                </Text>
+                <Text style={styles.petInfo} numberOfLines={1}>
+                  {pet.type}
+                </Text>
                 <Text style={styles.petInfo} numberOfLines={1}>
                   {pet.breed || pet.birth_date || "Brak informacji"}
                 </Text>
@@ -89,7 +93,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.scheduleContainer}>
-          <Text style={styles.scheduleTitle}>Harmonogram spacerów</Text>
+          <Text style={styles.scheduleTitle}>Harmonogram</Text>
 
           {reminders.length > 0 ? (
             reminders.map((reminder) => (
@@ -173,7 +177,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "700",
     color: "#000000",
-    marginBottom: 50,
+    marginBottom: 25,
   },
 
   sectionTitle: {
@@ -189,7 +193,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
-  
+
   petCard: {
     width: "48%",
     height: 90,
@@ -208,7 +212,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  
+
   petTextContainer: {
     flex: 1,
     marginLeft: 8,
@@ -237,7 +241,7 @@ const styles = StyleSheet.create({
   scheduleContainer: {
     borderRadius: 16,
     backgroundColor: "#ffffff",
-    marginTop: 40,
+    marginTop: 25,
     paddingVertical: 20,
     paddingHorizontal: 10,
     shadowColor: "#0022FF",
@@ -256,7 +260,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#0022FF",
     marginLeft: 5,
-    marginBottom: 30,
+    marginBottom: 20,
   },
 
   scheduleItem: {
