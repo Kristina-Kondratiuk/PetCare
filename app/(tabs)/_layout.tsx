@@ -24,11 +24,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="login"
+        name="profile"
         options={{
-          title: 'Login',
+          title: 'Profil',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.circle" color={color} />,
-        }}
+       }}
+
       />
       <Tabs.Screen
         name="explore"
