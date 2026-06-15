@@ -101,6 +101,7 @@ export default function Profile() {
       <MenuItem
         title="Harmonogram"
         icon={<CalendarDays size={22} color="#0044FF" strokeWidth={2} />}
+        onPress={() => router.push("/schedule")}
       />
       <MenuItem
         title="Historia przypomnień"
@@ -142,9 +143,9 @@ function PetCard({ name, type, image }: any) {
   );
 }
 
-function MenuItem({ title, icon, right, danger, hideArrow }: any) {
+function MenuItem({ title, icon, right, danger, hideArrow, onPress }: any) {
   return (
-    <TouchableOpacity style={[styles.menuItem, danger && styles.dangerItem]}>
+    <TouchableOpacity style={[styles.menuItem, danger && styles.dangerItem]} onPress={onPress}>
       <View style={styles.iconCircle}>{icon}</View>
 
       <Text style={[styles.menuText, danger && styles.dangerText]}>

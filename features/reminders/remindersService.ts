@@ -15,6 +15,26 @@ export type Reminder = {
     updated_at?: string;
 };
 
+export const getAllReminders = async () => {
+    const user = await getCurrentUser();
+  
+    if (!user) {
+        throw new Error("User not authenticated");
+    }
+  
+    const { data, error } = await supabase
+        .from("reminders")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("reminder_time", { ascending: true });
+  
+    if (error) {
+      throw new Error(error.message);
+    }
+  
+    return data as Reminder[];
+};
+
 export const getReminders = async (petId: string) => {
     const { data, error } = await supabase
         .from("reminders")

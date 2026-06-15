@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { createReminder, deleteReminder, getReminders, Reminder, updateReminder } from "./remindersService";
+import { createReminder, deleteReminder, getAllReminders, getReminders, Reminder, updateReminder } from "./remindersService";
 
 type RemindersState = {
     reminders: Reminder[];
@@ -12,6 +12,21 @@ const initialState: RemindersState = {
     isLoading: false,
     error: null,
 };
+
+export const fetchAllReminders = createAsyncThunk(
+    "reminders/fetchAllReminders",
+    async (_, { rejectWithValue }) => {
+        try {
+            return await getAllReminders();
+        } catch (error) {
+            if (error instanceof Error) {
+            return rejectWithValue(error.message);
+            }
+  
+            return rejectWithValue("Failed to fetch reminders");
+        }
+    }
+);
 
 export const fetchReminders = createAsyncThunk(
     "reminders/fetchReminders",
@@ -62,7 +77,7 @@ export const editReminder = createAsyncThunk(
 );
 
 export const removeReminder = createAsyncThunk(
-    "reminder/removeReminder",
+    "reminders/removeReminder",
     async (id: string, { rejectWithValue }) => {
         try {
             await deleteReminder(id);
@@ -91,6 +106,22 @@ const remindersSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            .addCase(fetchAllReminders.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(fetchAllReminders.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.error = null;
+                state.reminders = action.payload;
+            })
+            .addCase(fetchAllReminders.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error =
+                typeof action.payload === "string"
+                    ? action.payload
+                    : "Failed to fetch reminders";
+            })
             .addCase(fetchReminders.pending, (state) => {
                 state.isLoading = true;
                 state.error = null;
