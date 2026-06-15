@@ -65,7 +65,7 @@ export default function HomeScreen() {
           <Text style={styles.petInfo}>Nie dodano jeszcze zwierząt</Text>
         )}
 
-        <View style={styles.petsContainer}>
+        <View style={styles.petsGrid}>
           {pets.map((pet) => (
             <View key={pet.id} style={styles.petCard}>
               {pet.photo_url ? (
@@ -77,10 +77,10 @@ export default function HomeScreen() {
                 <View style={styles.petImage} />
               )}
 
-              <View>
-                <Text style={styles.petName}>{pet.name}</Text>
-                <Text style={styles.petInfo}>{pet.type}</Text>
-                <Text style={styles.petInfo}>
+              <View style={styles.petTextContainer}>
+                <Text style={styles.petName} numberOfLines={1}>{pet.name}</Text>
+                <Text style={styles.petInfo} numberOfLines={1}>{pet.type}</Text>
+                <Text style={styles.petInfo} numberOfLines={1}>
                   {pet.breed || pet.birth_date || "Brak informacji"}
                 </Text>
               </View>
@@ -184,18 +184,15 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
 
-  petsContainer: {
+  petsGrid: {
     flexDirection: "row",
-    gap: 5,
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
-
+  
   petCard: {
-    flex: 1,
-    height: 74,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    padding: 10,
+    width: "48%",
+    height: 90,
     borderRadius: 13,
     backgroundColor: "#ffffff",
     shadowColor: "#0022FF",
@@ -206,6 +203,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.52,
     shadowRadius: 2,
     elevation: 4,
+    padding: 10,
+    marginBottom: 12,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  
+  petTextContainer: {
+    flex: 1,
+    marginLeft: 8,
   },
 
   petImage: {

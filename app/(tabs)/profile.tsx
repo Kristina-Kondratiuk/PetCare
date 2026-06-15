@@ -82,6 +82,7 @@ export default function Profile() {
         title="Dodaj zwierzęta"
         icon={<Plus size={22} color="#0044FF" strokeWidth={2} />}
         hideArrow
+        onPress={() => router.push("/add-pet-profile")}
       />
 
       <MenuItem
