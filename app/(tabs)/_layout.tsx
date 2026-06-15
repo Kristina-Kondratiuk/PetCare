@@ -24,18 +24,31 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="gallery"
         options={{
-          title: 'Profil',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.circle" color={color} />,
-       }}
-
+          title: 'Gallery',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="photo" color={color} />,
+        }}
       />
       <Tabs.Screen
-        name="explore"
+        name="camera"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: '',
+          tabBarIcon: ({ color }) => <IconSymbol size={32} name="camera.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="map"
+        options={{
+          title: 'Map',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="map.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
         }}
       />
     </Tabs>
