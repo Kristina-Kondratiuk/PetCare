@@ -1,41 +1,67 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
+import { Stack, usePathname, useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
+import "react-native-reanimated";
 
-import { Provider, useDispatch } from 'react-redux';
-import { store } from '../store';
+import { Provider, useDispatch, useSelector } from "react-redux";
+import { store } from "../store";
 
-import { getCurrentUser } from '@/features/auth/authService';
-import { setUser } from '@/features/auth/authSlice';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { getCurrentUser } from "@/features/auth/authService";
+import { setUser } from "@/features/auth/authSlice";
+import { useColorScheme } from "@/hooks/use-color-scheme";
 
 export const unstable_settings = {
-  anchor: '(tabs)',
+  anchor: "(tabs)",
 };
 
 function RootLayoutContent() {
   const colorScheme = useColorScheme();
   const dispatch = useDispatch();
+  const pathname = usePathname();
 
-  // Auto-login: check if user session exists in Supabase on app start
-  // If yes, restore user in Redux store
+  const user = useSelector((state: any) => state.auth.user);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const router = useRouter();
+
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const user = await getCurrentUser();
+        const currentUser = await getCurrentUser();
 
-        if (user) {
-          dispatch(setUser(user));
+        if (currentUser) {
+          dispatch(setUser(currentUser));
         }
       } catch (error) {
         console.log("Auto login error:", error);
+      } finally {
+        setIsCheckingAuth(false);
       }
     };
 
     loadUser();
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isCheckingAuth) return;
+  
+    const isAuthScreen =
+      pathname === "/" ||
+      pathname === "/login" ||
+      pathname === "/register";
+  
+    if (!user && !isAuthScreen) {
+      router.replace("/login");
+    }
+  
+    if (user && isAuthScreen) {
+      router.replace("/(tabs)");
+    }
+  }, [user, pathname, isCheckingAuth, router]);
+
+  if (isCheckingAuth) {
+    return null;
+  }
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
