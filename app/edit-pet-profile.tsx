@@ -16,6 +16,7 @@ import {
 import { uploadPetProfilePhoto } from "@/features/petPhotos/petPhotosService";
 import { editPet, fetchPets } from "@/features/pets/petsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function EditPetProfile() {
   const dispatch = useAppDispatch();
@@ -137,61 +138,82 @@ export default function EditPetProfile() {
   };
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <MoveLeft size={36} color="#0044FF" strokeWidth={1.5} />
+    <View style={styles.screen}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <MoveLeft size={36} color="#0044FF" strokeWidth={1.5} />
+          </TouchableOpacity>
+
+          <Text style={styles.title}>Ustawienia profilu</Text>
+        </View>
+
+        <TouchableOpacity style={styles.avatar} onPress={showImageOptions}>
+          {image ? (
+            <Image source={{ uri: image }} style={styles.avatarImage} />
+          ) : (
+            <Text style={styles.avatarPlaceholder}>+</Text>
+          )}
         </TouchableOpacity>
 
-        <Text style={styles.title}>Ustawienia profilu</Text>
-      </View>
+        <TouchableOpacity onPress={showImageOptions}>
+          <Text style={styles.addPhotoText}>Dodaj zdjęcie</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.avatar} onPress={showImageOptions}>
-        {image ? (
-          <Image source={{ uri: image }} style={styles.avatarImage} />
-        ) : (
-          <Text style={styles.avatarPlaceholder}>+</Text>
-        )}
-      </TouchableOpacity>
+        <Text style={styles.label}>Opis</Text>
+        <TextInput
+          style={[styles.input, styles.description]}
+          value={description}
+          onChangeText={setDescription}
+          multiline
+          textAlignVertical="top"
+        />
 
-      <TouchableOpacity onPress={showImageOptions}>
-        <Text style={styles.addPhotoText}>Dodaj zdjęcie</Text>
-      </TouchableOpacity>
+        <Text style={styles.label}>Imię</Text>
+        <TextInput style={styles.input} value={name} onChangeText={setName} />
 
-      <Text style={styles.label}>Opis</Text>
-      <TextInput
-        style={[styles.input, styles.description]}
-        value={description}
-        onChangeText={setDescription}
-        multiline
-        textAlignVertical="top"
+        <Text style={styles.label}>Typ</Text>
+        <TextInput style={styles.input} value={type} onChangeText={setType} />
+
+        <Text style={styles.label}>Rasa</Text>
+        <TextInput style={styles.input} value={breed} onChangeText={setBreed} />
+
+        <Text style={styles.label}>Data urodzenia</Text>
+        <TextInput
+          style={styles.input}
+          value={birthDate}
+          onChangeText={setBirthDate}
+        />
+
+        <Text style={styles.label}>Waga</Text>
+        <TextInput
+          style={styles.input}
+          value={weight}
+          onChangeText={setWeight}
+        />
+
+        <TouchableOpacity style={styles.button} onPress={savePetProfile}>
+          <Text style={styles.buttonText}>
+            {isLoading ? "Zapisywanie" : "Zapisz zmiany"}
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+
+      <LinearGradient
+        colors={[
+          "rgba(255,255,255,1)",
+          "rgba(255,255,255,1)",
+          "rgba(255,255,255,0.98)",
+          "rgba(255,255,255,0.95)",
+          "rgba(255,255,255,0.85)",
+          "rgba(255,255,255,0.6)",
+          "rgba(255,255,255,0)",
+        ]}
+        locations={[0, 0.2, 0.35, 0.5, 0.7, 0.85, 1]}
+        style={styles.topFade}
+        pointerEvents="none"
       />
-
-      <Text style={styles.label}>Imię</Text>
-      <TextInput style={styles.input} value={name} onChangeText={setName} />
-
-      <Text style={styles.label}>Typ</Text>
-      <TextInput style={styles.input} value={type} onChangeText={setType} />
-
-      <Text style={styles.label}>Rasa</Text>
-      <TextInput style={styles.input} value={breed} onChangeText={setBreed} />
-
-      <Text style={styles.label}>Data urodzenia</Text>
-      <TextInput
-        style={styles.input}
-        value={birthDate}
-        onChangeText={setBirthDate}
-      />
-
-      <Text style={styles.label}>Waga</Text>
-      <TextInput style={styles.input} value={weight} onChangeText={setWeight} />
-
-      <TouchableOpacity style={styles.button} onPress={savePetProfile}>
-        <Text style={styles.buttonText}>
-          {isLoading ? "Zapisywanie" : "Zapisz zmiany"}
-        </Text>
-      </TouchableOpacity>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -200,7 +222,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ffffff",
   },
+  topFade: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 95,
+    zIndex: 999,
+  },
   container: {
+    paddingTop: 40,
     paddingHorizontal: 20,
     paddingBottom: 40,
     backgroundColor: "#ffffff",

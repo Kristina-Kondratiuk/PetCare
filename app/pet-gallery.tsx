@@ -1,22 +1,23 @@
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, Stack, useLocalSearchParams } from "expo-router";
+import { MoveLeft, Plus } from "lucide-react-native";
 import { useEffect } from "react";
 import {
-    Alert,
-    Image,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  Alert,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 import { PetPhoto } from "@/features/petPhotos/petPhotosService";
 import {
-    addPetPhotoFromDevice,
-    fetchPetPhotos,
-    removePetPhoto,
+  addPetPhotoFromDevice,
+  fetchPetPhotos,
+  removePetPhoto,
 } from "@/features/petPhotos/petPhotosSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
@@ -79,16 +80,19 @@ export default function PetGalleryScreen() {
         contentContainerStyle={styles.content}
       >
         <View style={styles.header}>
-          <Pressable onPress={() => router.back()}>
-            <Text style={styles.backButton}>←</Text>
+          <Pressable style={styles.backButton} onPress={() => router.back()}>
+            <MoveLeft size={36} color={"#0044ff"} strokeWidth={1.5} />
           </Pressable>
 
           <Text style={styles.petName}>{petName}</Text>
         </View>
 
         <Pressable style={styles.addPhotoButton} onPress={handleAddPhoto}>
+          <View>
+            <Plus size={22} color="#0044FF" strokeWidth={1.5} />
+          </View>
           <Text style={styles.addPhotoText}>
-            {isLoading ? "Dodawanie..." : "+ Dodać zdjęcia zwierzęta"}
+            {isLoading ? "Dodawanie..." : "Dodać zdjęcie zwierzęta"}
           </Text>
         </Pressable>
 
@@ -162,6 +166,8 @@ const styles = StyleSheet.create({
   header: {
     position: "relative",
     height: 40,
+    flexDirection: "row",
+    alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 30,
   },
@@ -169,11 +175,11 @@ const styles = StyleSheet.create({
   backButton: {
     position: "absolute",
     left: 0,
-    fontSize: 32,
-    color: "#0022FF",
+    zIndex: 1,
   },
 
   petName: {
+    flex: 1,
     fontFamily: "Inter",
     fontSize: 24,
     fontWeight: "700",
@@ -182,10 +188,11 @@ const styles = StyleSheet.create({
   },
 
   addPhotoButton: {
-    height: 49,
     borderRadius: 13,
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 15,
     backgroundColor: "#ffffff",
     marginBottom: 30,
     shadowColor: "#0022FF",
@@ -201,6 +208,7 @@ const styles = StyleSheet.create({
   addPhotoText: {
     fontFamily: "Inter",
     fontSize: 13,
+    marginLeft: 5,
     fontWeight: "500",
     color: "#000000",
   },

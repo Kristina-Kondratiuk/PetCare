@@ -10,12 +10,13 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View,
+    View
 } from "react-native";
 
 import { uploadPetProfilePhoto } from "@/features/petPhotos/petPhotosService";
 import { addPet, editPet } from "@/features/pets/petsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function AddPetProfile() {
   const dispatch = useAppDispatch();
@@ -117,7 +118,8 @@ export default function AddPetProfile() {
   };
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
+    <View style={styles.screen}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
           <MoveLeft size={36} color="#0044FF" strokeWidth={1.5} />
@@ -172,6 +174,22 @@ export default function AddPetProfile() {
         </Text>
       </TouchableOpacity>
     </ScrollView>
+
+    <LinearGradient
+        colors={[
+          "rgba(255,255,255,1)",
+          "rgba(255,255,255,1)",
+          "rgba(255,255,255,0.98)",
+          "rgba(255,255,255,0.95)",
+          "rgba(255,255,255,0.85)",
+          "rgba(255,255,255,0.6)",
+          "rgba(255,255,255,0)",
+        ]}
+        locations={[0, 0.2, 0.35, 0.5, 0.7, 0.85, 1]}
+        style={styles.topFade}
+        pointerEvents="none"
+      />
+    </View>
   );
 }
 
@@ -180,7 +198,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ffffff",
   },
+  topFade: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 95,
+    zIndex: 999,
+  },
   container: {
+    paddingTop: 40,
     paddingHorizontal: 20,
     paddingBottom: 40,
     backgroundColor: "#ffffff",

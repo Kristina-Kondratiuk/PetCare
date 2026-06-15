@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   header: {
-    marginTop: 50,
+    marginTop: 80,
     marginBottom: 28,
     flexDirection: "row",
     alignItems: "center",

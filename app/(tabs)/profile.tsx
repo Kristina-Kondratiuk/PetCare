@@ -1,19 +1,16 @@
 import { router } from "expo-router";
 import {
-  Bell,
   CalendarDays,
-  History,
   LogOut,
   Pencil,
   Plus,
   Trash2,
 } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Image,
   ScrollView,
   StyleSheet,
-  Switch,
   Text,
   TouchableOpacity,
   View,
@@ -22,6 +19,7 @@ import {
 import { fetchPets } from "@/features/pets/petsSlice";
 import { fetchProfile } from "@/features/profile/profileSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function Profile() {
   const dispatch = useAppDispatch();
@@ -35,90 +33,88 @@ export default function Profile() {
     dispatch(fetchProfile());
   }, [dispatch]);
 
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Mój profil</Text>
+    <View style={styles.screen}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text style={styles.title}>Mój profil</Text>
 
-      <View style={styles.userCard}>
-        {profile?.photo_url ? (
-          <Image source={{ uri: profile.photo_url }} style={styles.avatar} />
-        ) : (
-          <View style={styles.avatar}>
-            <Text style={styles.avatarPlaceholder}>Brak zdjęcia</Text>
+        <View style={styles.userCard}>
+          {profile?.photo_url ? (
+            <Image source={{ uri: profile.photo_url }} style={styles.avatar} />
+          ) : (
+            <View style={styles.avatar}>
+              <Text style={styles.avatarPlaceholder}>Brak zdjęcia</Text>
+            </View>
+          )}
+
+          <View>
+            <Text style={styles.userName}>
+              {profile?.first_name || profile?.last_name
+                ? `${profile.first_name ?? ""} ${
+                    profile.last_name ?? ""
+                  }`.trim()
+                : user?.email ?? "Użytkownik"}
+            </Text>
+
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() => router.push("/edit-profile")}
+            >
+              <Text style={styles.editText}>Edytuj</Text>
+              <Pencil size={14} color="#0044FF" strokeWidth={2} />
+            </TouchableOpacity>
           </View>
-        )}
-
-        <View>
-          <Text style={styles.userName}>
-            {profile?.first_name || profile?.last_name
-              ? `${profile.first_name ?? ""} ${profile.last_name ?? ""}`.trim()
-              : user?.email ?? "Użytkownik"}
-          </Text>
-
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={() => router.push("/edit-profile")}
-          >
-            <Text style={styles.editText}>Edytuj</Text>
-            <Pencil size={14} color="#0044FF" strokeWidth={2} />
-          </TouchableOpacity>
         </View>
-      </View>
 
-      <Text style={styles.sectionTitle}>Zarządzanie profilem</Text>
+        <Text style={styles.sectionTitle}>Zarządzanie profilem</Text>
 
-      {pets.map((pet) => (
-        <PetCard
-          key={pet.id}
-          id={pet.id}
-          name={pet.name}
-          type={pet.type}
-          image={pet.photo_url}
-        />
-      ))}
-
-      <MenuItem
-        title="Dodaj zwierzęta"
-        icon={<Plus size={22} color="#0044FF" strokeWidth={2} />}
-        hideArrow
-        onPress={() => router.push("/add-pet-profile")}
-      />
-
-      <MenuItem
-        title="Ustawienia powiadomień"
-        icon={<Bell size={22} color="#0044FF" strokeWidth={2} />}
-        right={
-          <Switch
-            value={notificationsEnabled}
-            onValueChange={setNotificationsEnabled}
-            trackColor={{
-              false: "#D9D9D9",
-              true: "#0044FF",
-            }}
-            thumbColor="#FFFFFF"
+        {pets.map((pet) => (
+          <PetCard
+            key={pet.id}
+            id={pet.id}
+            name={pet.name}
+            type={pet.type}
+            image={pet.photo_url}
           />
-        }
+        ))}
+
+        <MenuItem
+          title="Dodaj zwierzęta"
+          icon={<Plus size={22} color="#0044FF" strokeWidth={2} />}
+          hideArrow
+          onPress={() => router.push("/add-pet-profile")}
+        />
+        <MenuItem
+          title="Harmonogram"
+          icon={<CalendarDays size={22} color="#0044FF" strokeWidth={2} />}
+          onPress={() => router.push("/schedule")}
+        />
+        <MenuItem
+          title="Wyloguj się"
+          icon={<LogOut size={22} color="#0044FF" strokeWidth={2} />}
+        />
+        <MenuItem
+          title="Usunięcie konta"
+          icon={<Trash2 size={22} color="#FF3030" strokeWidth={2} />}
+          danger
+        />
+      </ScrollView>
+
+      <LinearGradient
+        colors={[
+          "rgba(255,255,255,1)",
+          "rgba(255,255,255,1)",
+          "rgba(255,255,255,0.98)",
+          "rgba(255,255,255,0.95)",
+          "rgba(255,255,255,0.85)",
+          "rgba(255,255,255,0.6)",
+          "rgba(255,255,255,0)",
+        ]}
+        locations={[0, 0.2, 0.35, 0.5, 0.7, 0.85, 1]}
+        style={styles.topFade}
+        pointerEvents="none"
       />
-      <MenuItem
-        title="Harmonogram"
-        icon={<CalendarDays size={22} color="#0044FF" strokeWidth={2} />}
-        onPress={() => router.push("/schedule")}
-      />
-      <MenuItem
-        title="Historia przypomnień"
-        icon={<History size={22} color="#0044FF" strokeWidth={2} />}
-      />
-      <MenuItem
-        title="Wyloguj się"
-        icon={<LogOut size={22} color="#0044FF" strokeWidth={2} />}
-      />
-      <MenuItem
-        title="Usunięcie konta"
-        icon={<Trash2 size={22} color="#FF3030" strokeWidth={2} />}
-        danger
-      />
-    </ScrollView>
+    </View>
   );
 }
 
@@ -178,9 +174,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#ffffff",
   },
+  topFade: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 95,
+    zIndex: 999,
+  },
+
+  container: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+  },
+
   content: {
-    padding: 20,
-    paddingBottom: 99,
+    paddingHorizontal: 20,
+    paddingTop: 40,
+    paddingBottom: 20,
   },
   title: {
     fontSize: 24,

@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useFocusEffect } from "expo-router";
+import { Plus } from "lucide-react-native";
 import { useCallback } from "react";
 import {
   Alert,
@@ -19,7 +20,7 @@ import {
 export default function GalleryScreen() {
   const dispatch = useAppDispatch();
   const { pets } = useAppSelector((state) => state.pets);
-  const { photos } = useAppSelector((state) => state.petPhotos);
+  const { photos, isLoading, error } = useAppSelector((state) => state.petPhotos);
 
   useFocusEffect(
     useCallback(() => {
@@ -74,7 +75,12 @@ export default function GalleryScreen() {
         <Text style={styles.title}>Galeria zdjęć</Text>
 
         <Pressable style={styles.addPhotoButton} onPress={handleSelectPetForPhoto}>
-          <Text style={styles.addPhotoText}>+ Dodać zdjęcia zwierzęta</Text>
+        <View>
+            <Plus size={22} color="#0044FF" strokeWidth={1.5} />
+          </View>
+          <Text style={styles.addPhotoText}>
+            {isLoading ? "Dodawanie..." : "Dodać zdjęcie zwierzęta"}
+          </Text>
         </Pressable>
 
         {pets.map((pet) => (
@@ -171,10 +177,11 @@ const styles = StyleSheet.create({
   },
 
   addPhotoButton: {
-    height: 49,
     borderRadius: 13,
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 15,
     backgroundColor: "#FFFFFF",
     shadowColor: "#0022FF",
     shadowOffset: {
@@ -189,6 +196,7 @@ const styles = StyleSheet.create({
   addPhotoText: {
     fontFamily: "Inter",
     fontSize: 13,
+    marginLeft: 5,
     fontWeight: "500",
     color: "#000000",
   },
@@ -250,5 +258,9 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 14,
     color: "#676767",
+  },
+  errorText: {
+    color: "red",
+    marginTop: 10,
   },
 });
