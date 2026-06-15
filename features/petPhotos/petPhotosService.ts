@@ -98,6 +98,44 @@ export const uploadPetPhoto = async (petId: string, imageUri: string) => {
   return await addPetPhoto(petId, data.publicUrl);
 };
 
+export const uploadPetProfilePhoto = async (
+  petId: string,
+  imageUri: string
+) => {
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+
+  if (userError) {
+    throw new Error(userError.message);
+  }
+
+  if (!userData.user) {
+    throw new Error("User not authenticated");
+  }
+
+  const response = await fetch(imageUri);
+  const arrayBuffer = await response.arrayBuffer();
+
+  const fileExt = imageUri.split(".").pop() ?? "jpg";
+  const fileName = `${
+    userData.user.id
+  }/${petId}/profile-${Date.now()}.${fileExt}`;
+
+  const { error: uploadError } = await supabase.storage
+    .from("pet-photos")
+    .upload(fileName, arrayBuffer, {
+      contentType: `image/${fileExt}`,
+      upsert: true,
+    });
+
+  if (uploadError) {
+    throw new Error(uploadError.message);
+  }
+
+  const { data } = supabase.storage.from("pet-photos").getPublicUrl(fileName);
+
+  return data.publicUrl;
+};
+
 export const deletePetPhoto = async (photo: PetPhoto) => {
   const filePath = photo.photo_url.split("/pet-photos/")[1];
 
