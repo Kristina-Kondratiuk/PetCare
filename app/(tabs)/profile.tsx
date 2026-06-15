@@ -71,6 +71,7 @@ export default function Profile() {
       {pets.map((pet) => (
         <PetCard
           key={pet.id}
+          id={pet.id}
           name={pet.name}
           type={pet.type}
           image={pet.photo_url}
@@ -120,9 +121,14 @@ export default function Profile() {
   );
 }
 
-function PetCard({ name, type, image }: any) {
+function PetCard({ id, name, type, image }: any) {
   return (
-    <TouchableOpacity style={styles.petCard} onPress={() => router.push('/pet-profile')}>
+    <TouchableOpacity
+      style={styles.petCard}
+      onPress={() =>
+        router.push({ pathname: "/pet-profile", params: { petId: id } })
+      }
+    >
       {image ? (
         <Image source={{ uri: image }} style={styles.petImage} />
       ) : (
@@ -145,7 +151,10 @@ function PetCard({ name, type, image }: any) {
 
 function MenuItem({ title, icon, right, danger, hideArrow, onPress }: any) {
   return (
-    <TouchableOpacity style={[styles.menuItem, danger && styles.dangerItem]} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.menuItem, danger && styles.dangerItem]}
+      onPress={onPress}
+    >
       <View style={styles.iconCircle}>{icon}</View>
 
       <Text style={[styles.menuText, danger && styles.dangerText]}>
