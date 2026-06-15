@@ -8,6 +8,7 @@ import {
 } from "lucide-react-native";
 import React, { useEffect } from "react";
 import {
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -16,6 +17,7 @@ import {
   View,
 } from "react-native";
 
+import { logoutUser } from "@/features/auth/authSlice";
 import { fetchPets } from "@/features/pets/petsSlice";
 import { fetchProfile } from "@/features/profile/profileSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -32,6 +34,30 @@ export default function Profile() {
     dispatch(fetchPets());
     dispatch(fetchProfile());
   }, [dispatch]);
+
+  const handleLogout = async () => {
+    await dispatch(logoutUser()).unwrap();
+    router.replace("/login");
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert("Usunąć konto?", "Ta operacja jest nieodwracalna.", [
+      {
+        text: "Anuluj",
+        style: "cancel",
+      },
+      {
+        text: "Usuń",
+        style: "destructive",
+        onPress: () => {
+          Alert.alert(
+            "Funkcja w przygotowaniu",
+            "Usuwanie konta nie zostało jeszcze zaimplementowane."
+          );
+        },
+      },
+    ]);
+  };
 
   return (
     <View style={styles.screen}>
@@ -92,11 +118,13 @@ export default function Profile() {
         <MenuItem
           title="Wyloguj się"
           icon={<LogOut size={22} color="#0044FF" strokeWidth={2} />}
+          onPress={handleLogout}
         />
         <MenuItem
           title="Usunięcie konta"
           icon={<Trash2 size={22} color="#FF3030" strokeWidth={2} />}
           danger
+          onPress={handleDeleteAccount}
         />
       </ScrollView>
 

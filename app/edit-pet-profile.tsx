@@ -1,17 +1,18 @@
 import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import { MoveLeft } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
   Image,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
+
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import { uploadPetProfilePhoto } from "@/features/petPhotos/petPhotosService";
 import { editPet, fetchPets } from "@/features/pets/petsSlice";
@@ -19,6 +20,8 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function EditPetProfile() {
+  const scrollRef = useRef<KeyboardAwareScrollView>(null);
+
   const dispatch = useAppDispatch();
   const { petId } = useLocalSearchParams<{ petId: string }>();
   const { pets, isLoading } = useAppSelector((state) => state.pets);
@@ -139,7 +142,14 @@ export default function EditPetProfile() {
 
   return (
     <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.container}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.container}
+        enableOnAndroid
+        extraScrollHeight={20}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        ref={scrollRef}
+      >
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()}>
             <MoveLeft size={36} color="#0044FF" strokeWidth={1.5} />
@@ -197,7 +207,7 @@ export default function EditPetProfile() {
             {isLoading ? "Zapisywanie" : "Zapisz zmiany"}
           </Text>
         </TouchableOpacity>
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <LinearGradient
         colors={[

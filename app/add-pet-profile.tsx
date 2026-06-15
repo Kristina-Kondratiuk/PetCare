@@ -1,17 +1,17 @@
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { MoveLeft } from "lucide-react-native";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
-    Alert,
-    Image,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import { uploadPetProfilePhoto } from "@/features/petPhotos/petPhotosService";
 import { addPet, editPet } from "@/features/pets/petsSlice";
@@ -19,6 +19,8 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function AddPetProfile() {
+  const scrollRef = useRef<KeyboardAwareScrollView>(null);
+  
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((state) => state.pets);
 
@@ -84,7 +86,7 @@ export default function AddPetProfile() {
       Alert.alert("Brak danych", "Uzupełnij imię i typ pupila.");
       return;
     }
-  
+
     try {
       const newPet = await dispatch(
         addPet({
@@ -97,10 +99,10 @@ export default function AddPetProfile() {
           photo_url: undefined,
         })
       ).unwrap();
-  
+
       if (image) {
         const photoUrl = await uploadPetProfilePhoto(newPet.id, image);
-  
+
         await dispatch(
           editPet({
             id: newPet.id,
@@ -110,7 +112,7 @@ export default function AddPetProfile() {
           })
         ).unwrap();
       }
-  
+
       router.replace("/profile");
     } catch {
       Alert.alert("Błąd", "Nie udało się dodać pupila.");
@@ -119,63 +121,79 @@ export default function AddPetProfile() {
 
   return (
     <View style={styles.screen}>
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <MoveLeft size={36} color="#0044FF" strokeWidth={1.5} />
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.container}
+        enableOnAndroid
+        extraScrollHeight={20}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        ref={scrollRef}
+      >
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <MoveLeft size={36} color="#0044FF" strokeWidth={1.5} />
+          </TouchableOpacity>
+
+          <Text style={styles.title}>Dodaj pupila</Text>
+        </View>
+
+        <TouchableOpacity style={styles.avatar} onPress={showImageOptions}>
+          {image ? (
+            <Image source={{ uri: image }} style={styles.avatarImage} />
+          ) : (
+            <Text style={styles.avatarPlaceholder}>+</Text>
+          )}
         </TouchableOpacity>
 
-        <Text style={styles.title}>Dodaj pupila</Text>
-      </View>
+        <TouchableOpacity onPress={showImageOptions}>
+          <Text style={styles.addPhotoText}>Dodaj zdjęcie</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.avatar} onPress={showImageOptions}>
-        {image ? (
-          <Image source={{ uri: image }} style={styles.avatarImage} />
-        ) : (
-          <Text style={styles.avatarPlaceholder}>+</Text>
-        )}
-      </TouchableOpacity>
+        <Text style={styles.label}>Imię</Text>
+        <TextInput style={styles.input} value={name} onChangeText={setName} />
 
-      <TouchableOpacity onPress={showImageOptions}>
-        <Text style={styles.addPhotoText}>Dodaj zdjęcie</Text>
-      </TouchableOpacity>
+        <Text style={styles.label}>Typ</Text>
+        <TextInput style={styles.input} value={type} onChangeText={setType} />
 
-      <Text style={styles.label}>Imię</Text>
-      <TextInput style={styles.input} value={name} onChangeText={setName} />
+        <Text style={styles.label}>Rasa</Text>
+        <TextInput style={styles.input} value={breed} onChangeText={setBreed} />
 
-      <Text style={styles.label}>Typ</Text>
-      <TextInput style={styles.input} value={type} onChangeText={setType} />
+        <Text style={styles.label}>Data urodzenia</Text>
+        <TextInput
+          style={styles.input}
+          value={birthDate}
+          onChangeText={setBirthDate}
+        />
 
-      <Text style={styles.label}>Rasa</Text>
-      <TextInput style={styles.input} value={breed} onChangeText={setBreed} />
+        <Text style={styles.label}>Waga</Text>
+        <TextInput
+          style={styles.input}
+          value={weight}
+          onChangeText={setWeight}
+        />
 
-      <Text style={styles.label}>Data urodzenia</Text>
-      <TextInput
-        style={styles.input}
-        value={birthDate}
-        onChangeText={setBirthDate}
-      />
+        <Text style={styles.label}>Opis</Text>
+        <TextInput
+          style={[styles.input, styles.description]}
+          value={description}
+          onChangeText={setDescription}
+          multiline
+          textAlignVertical="top"
+          onFocus={() => {
+            setTimeout(() => {
+              scrollRef.current?.scrollToEnd(true);
+            }, 250);
+          }}
+        />
 
-      <Text style={styles.label}>Waga</Text>
-      <TextInput style={styles.input} value={weight} onChangeText={setWeight} />
+        <TouchableOpacity style={styles.button} onPress={savePetProfile}>
+          <Text style={styles.buttonText}>
+            {isLoading ? "Zapisywanie" : "Zapisz zmiany"}
+          </Text>
+        </TouchableOpacity>
+      </KeyboardAwareScrollView>
 
-      <Text style={styles.label}>Opis</Text>
-      <TextInput
-        style={[styles.input, styles.description]}
-        value={description}
-        onChangeText={setDescription}
-        multiline
-        textAlignVertical="top"
-      />
-
-      <TouchableOpacity style={styles.button} onPress={savePetProfile}>
-        <Text style={styles.buttonText}>
-          {isLoading ? "Zapisywanie" : "Zapisz zmiany"}
-        </Text>
-      </TouchableOpacity>
-    </ScrollView>
-
-    <LinearGradient
+      <LinearGradient
         colors={[
           "rgba(255,255,255,1)",
           "rgba(255,255,255,1)",
