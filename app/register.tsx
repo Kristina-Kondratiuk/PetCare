@@ -1,5 +1,5 @@
 import * as ImagePicker from "expo-image-picker";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -8,12 +8,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import { clearAuthError, registerUser } from "@/features/auth/authSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 
 export default function Register() {
+  const scrollRef = useRef<KeyboardAwareScrollView>(null);
+
   const [image, setImage] = useState<string | null>(null);
 
   const dispatch = useAppDispatch();
@@ -85,7 +89,15 @@ export default function Register() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.screen}>
+      <KeyboardAwareScrollView
+        contentContainerStyle={styles.container}
+        enableOnAndroid
+        extraScrollHeight={20}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+        ref={scrollRef}
+      >
       <Text style={styles.text}>Rejestracja</Text>
 
       <TouchableOpacity onPress={pickImage} style={styles.avatar}>
@@ -152,11 +164,40 @@ export default function Register() {
           {isLoading ? "Rejestracja..." : "Zarejestruj się"}
         </Text>
       </TouchableOpacity>
+      </KeyboardAwareScrollView>
+
+      <LinearGradient
+        colors={[
+          "rgba(255,255,255,1)",
+          "rgba(255,255,255,1)",
+          "rgba(255,255,255,0.98)",
+          "rgba(255,255,255,0.95)",
+          "rgba(255,255,255,0.85)",
+          "rgba(255,255,255,0.6)",
+          "rgba(255,255,255,0)",
+        ]}
+        locations={[0, 0.2, 0.35, 0.5, 0.7, 0.85, 1]}
+        style={styles.topFade}
+        pointerEvents="none"
+      />
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+  },
+  topFade: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 95,
+    zIndex: 999,
+  },
   container: {
     flex: 1,
     justifyContent: "center",

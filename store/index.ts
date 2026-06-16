@@ -1,8 +1,10 @@
+import authReducer from "@/features/auth/authSlice";
+import medicalRecordsReducer from "@/features/medicalRecords/medicalRecordsSlice";
+import petPhotosReducer from "@/features/petPhotos/petPhotosSlice";
 import petsReducer from "@/features/pets/petsSlice";
+import profileReducer from "@/features/profile/profileSlice";
 import remindersReducer from "@/features/reminders/remindersSlice";
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "../features/auth/authSlice";
-import medicalRecordsReducer from "../features/medicalRecords/medicalRecordsSlice";
 
 export const store = configureStore({
     reducer: {
@@ -10,6 +12,8 @@ export const store = configureStore({
         pets: petsReducer,
         medicalRecords: medicalRecordsReducer,
         reminders: remindersReducer,
+        petPhotos: petPhotosReducer,
+        profile: profileReducer,
     },
 });
 

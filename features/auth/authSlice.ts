@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { login, register } from "./authService";
+import { login, logoutUser as logoutUserService, register } from "./authService";
 
 type User = {
     id: string;
@@ -55,6 +55,21 @@ export const registerUser = createAsyncThunk(
     }
 );
 
+export const logoutUser = createAsyncThunk(
+    "auth/logoutUser",
+    async (_, { rejectWithValue }) => {
+        try {
+            await logoutUserService();
+        } catch (error) {
+            if (error instanceof Error) {
+            return rejectWithValue(error.message);
+            }
+    
+            return rejectWithValue("Logout failed");
+        }
+    }
+);
+
 const authSlice = createSlice({
     name: 'auth',
     initialState,
@@ -104,6 +119,11 @@ const authSlice = createSlice({
                     ? action.payload
                     : "Registration failed";
             })
+            .addCase(logoutUser.fulfilled, (state) => {
+                state.user = null;
+                state.error = null;
+                state.isLoading = false;
+              })
     },
 });
 

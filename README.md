@@ -1,50 +1,152 @@
-# Welcome to your Expo app 👋
+# PetCare
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Opis projektu
 
-## Get started
+PetCare to aplikacja mobilna stworzona w React Native i Expo, która pomaga właścicielom zwierząt zarządzać informacjami o swoich pupilach.
 
-1. Install dependencies
+Użytkownik może:
 
-   ```bash
-   npm install
-   ```
+- rejestrować konto i logować się,
+- dodawać profile zwierząt,
+- edytować dane zwierząt,
+- dodawać zdjęcia pupili,
+- zarządzać przypomnieniami,
+- przeglądać harmonogram opieki nad zwierzętami,
+- przechowywać dane w chmurze za pomocą Supabase.
 
-2. Start the app
+---
 
-   ```bash
-   npx expo start
-   ```
+## Technologie
 
-In the output, you'll find options to open the app in a
+- React Native
+- Expo
+- Expo Router
+- TypeScript
+- Redux Toolkit
+- Supabase
+- Expo Secure Store
+- Expo Image Picker
+- Expo Camera
+- Expo Notifications
+- Jest
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Architektura projektu
 
-## Get a fresh project
+Projekt wykorzystuje Redux Toolkit do zarządzania globalnym stanem aplikacji.
 
-When you're ready, run:
+### Struktura projektu
 
-```bash
-npm run reset-project
+```text
+features/
+├── auth
+├── pets
+├── reminders
+├── profile
+└── petPhotos
+
+services/
+├── supabase
+└── secureStorage
+
+store/
+├── store.ts
+└── hooks.ts
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## Funkcjonalności
 
-To learn more about developing your project with Expo, look at the following resources:
+### Autoryzacja
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- Rejestracja użytkownika
+- Logowanie użytkownika
+- Automatyczne logowanie po ponownym uruchomieniu aplikacji
+- Wylogowanie
+- Chronione ekrany
 
-## Join the community
+### Zarządzanie zwierzętami
 
-Join our community of developers creating universal apps.
+- Dodawanie zwierząt
+- Edycja danych
+- Usuwanie zwierząt
+- Dodawanie zdjęć
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Harmonogram
+
+- Tworzenie przypomnień
+- Oznaczanie przypomnień jako wykonane
+- Przegląd harmonogramu
+
+---
+
+## Funkcje natywne
+
+Aplikacja wykorzystuje natywne funkcje urządzenia:
+
+- Kamera (Expo Camera)
+- Galeria zdjęć (Expo Image Picker)
+- Bezpieczne przechowywanie sesji (Expo Secure Store)
+- Powiadomienia lokalne (Expo Notifications)
+- Haptic Feedback (Expo Haptics)
+
+---
+
+## Testy
+
+Projekt zawiera testy jednostkowe napisane przy użyciu Jest.
+
+Uruchomienie testów:
+
+```bash
+npm test
+```
+
+---
+
+## Instalacja
+
+### 1. Sklonuj repozytorium
+
+```bash
+git clone <repository-url>
+```
+
+### 2. Zainstaluj zależności
+
+```bash
+npm install
+```
+
+### 3. Utwórz plik `.env`
+
+```env
+EXPO_PUBLIC_SUPABASE_URL=YOUR_URL
+EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY=YOUR_KEY
+```
+
+### 4. Uruchom projekt
+
+```bash
+npx expo start
+```
+
+Następnie uruchom aplikację w Expo Go lub emulatorze.
+
+---
+
+## Build aplikacji
+
+Android Preview Build:
+
+```bash
+eas build --platform android --profile preview
+```
+
+---
+
+## Autors
+
+Kristina Kondratiuk, Karina Maksymenko
