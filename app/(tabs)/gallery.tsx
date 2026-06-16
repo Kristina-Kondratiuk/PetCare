@@ -1,4 +1,7 @@
-import { addPetPhotoFromDevice, fetchAllPetPhotos } from "@/features/petPhotos/petPhotosSlice";
+import {
+  addPetPhotoFromDevice,
+  fetchAllPetPhotos,
+} from "@/features/petPhotos/petPhotosSlice";
 import { fetchPets } from "@/features/pets/petsSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import * as ImagePicker from "expo-image-picker";
@@ -16,11 +19,10 @@ import {
   View,
 } from "react-native";
 
-
 export default function GalleryScreen() {
   const dispatch = useAppDispatch();
   const { pets } = useAppSelector((state) => state.pets);
-  const { photos, isLoading, error } = useAppSelector((state) => state.petPhotos);
+  const { photos, isLoading } = useAppSelector((state) => state.petPhotos);
 
   useFocusEffect(
     useCallback(() => {
@@ -35,7 +37,7 @@ export default function GalleryScreen() {
       allowsEditing: true,
       quality: 1,
     });
-  
+
     if (!result.canceled) {
       await dispatch(
         addPetPhotoFromDevice({
@@ -43,17 +45,17 @@ export default function GalleryScreen() {
           imageUri: result.assets[0].uri,
         })
       );
-  
+
       dispatch(fetchAllPetPhotos());
     }
   };
-  
+
   const handleSelectPetForPhoto = () => {
     if (pets.length === 0) {
       Alert.alert("Brak zwierząt", "Najpierw dodaj zwierzę.");
       return;
     }
-  
+
     Alert.alert("Dodaj zdjęcie", "Wybierz zwierzę", [
       ...pets.map((pet) => ({
         text: pet.name,
@@ -74,8 +76,11 @@ export default function GalleryScreen() {
       >
         <Text style={styles.title}>Galeria zdjęć</Text>
 
-        <Pressable style={styles.addPhotoButton} onPress={handleSelectPetForPhoto}>
-        <View>
+        <Pressable
+          style={styles.addPhotoButton}
+          onPress={handleSelectPetForPhoto}
+        >
+          <View>
             <Plus size={22} color="#0044FF" strokeWidth={1.5} />
           </View>
           <Text style={styles.addPhotoText}>

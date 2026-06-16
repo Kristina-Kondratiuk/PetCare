@@ -1,16 +1,16 @@
 import {
-    getNearbyPetPlaces,
-    MapPlace,
-    MapPlaceType,
+  getNearbyPetPlaces,
+  MapPlace,
+  MapPlaceType,
 } from "@/services/mapService";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Pressable,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
@@ -35,7 +35,7 @@ export default function MapScreen() {
       const nearbyPlaces = await getNearbyPetPlaces(latitude, longitude, type);
 
       setPlaces(nearbyPlaces);
-    } catch (error) {
+    } catch {
       setError("Nie udało się pobrać danych mapy.");
     } finally {
       setIsLoading(false);
@@ -63,7 +63,7 @@ export default function MapScreen() {
             currentLocation.coords.longitude,
             "vet"
           );
-      } catch (error) {
+      } catch {
         setError("Nie udało się pobrać danych mapy.");
       } finally {
         setIsLoading(false);
